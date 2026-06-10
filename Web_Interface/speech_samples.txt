@@ -1,0 +1,29 @@
+=== STANDARD CLARITY TEST ===
+The quick brown fox jumps over the lazy dog.
+Hello, this is a demonstration of my SLE project using generative AI.
+Please leave a message after the tone.
+The weather in Mumbai is expected to be sunny with a high of 32 degrees.
+
+=== NEWS / PROFESSIONAL TONE ===
+Breaking news: Scientists have discovered a new method for sustainable energy production.
+The stock market closed at an all-time high today, driven by tech sector gains.
+Local authorities are advising residents to stay indoors due to the heavy rainfall.
+In sports, the national team secured a victory in the final minutes of the game.
+
+=== NARRATIVE / STORYTELLING ===
+Once upon a time, in a kingdom far away, there lived a brave knight.
+She walked through the dense forest, listening to the whispering wind.
+"I cannot believe it," he whispered, staring at the glowing artifact.
+The old clock tower struck midnight, echoing through the empty streets.
+
+=== TECHNICAL / DIFFICULT WORDS ===
+The neural network architecture utilizes a transformer-based model for sequence-to-sequence learning.
+Please ensure that the SQL database is properly indexed before running the query.
+The algorithm optimizes for latency and throughput in real-time applications.
+Synthesizing high-fidelity audio requires precise control over mel-spectrogram parameters.
+
+=== EMOTIONAL / EXPRESSIVE ===
+I am so excited to show you this! It's finally working!
+I'm sorry, I cannot do that. It is against my programming.
+Why would you do that? I thought we were friends.
+Wait! Don't go in there! It's dangerous!

@@ -1,0 +1,10 @@
+numpy==1.24.3
+scipy
+pandas
+librosa
+matplotlib
+tensorboard
+tts @ https://github.com/coqui-ai/TTS/archive/refs/heads/dev.zip
+tqdm
+streamlit
+psutil

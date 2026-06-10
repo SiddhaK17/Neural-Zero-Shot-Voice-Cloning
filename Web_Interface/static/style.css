@@ -1,0 +1,738 @@
+/* 1. IMPORT FONTS */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Space+Grotesk:wght@300;500;700&display=swap');
+
+:root {
+    --primary: #00f3ff;   /* Cyan */
+    --secondary: #bc13fe; /* Purple */
+    --bg-dark: #050510;   /* Void Black */
+    --glass: rgba(10, 10, 20, 0.7); 
+    --border: rgba(255, 255, 255, 0.1);
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html {
+    min-height: 100%;
+}
+
+body {
+    background: radial-gradient(circle at center, #0a0a1a 0%, #000000 100%); /* Depth Gradient */
+    color: white;
+    font-family: 'Inter', sans-serif;
+    overflow: hidden; /* Prevent scrollbars */
+}
+
+/* 3D CANVAS (Behind Everything) */
+#canvas-container {
+    position: absolute;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 0;
+    overflow: hidden;
+    touch-action: none;
+}
+
+#canvas-container canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+/* UI CONTAINER (On Top) */
+.ui-container {
+    position: relative;
+    z-index: 10;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start; /* Align top so we can space items */
+    padding-top: 40px;
+    pointer-events: none; /* Let clicks pass through to 3D where empty */
+}
+
+/* HEADER (Enhanced & Positioned Higher) */
+header {
+    text-align: center;
+    pointer-events: auto;
+    margin-bottom: 10px; /* Reduced margin */
+    z-index: 50; /* Super high Z-index to sit ON TOP of the ring */
+    position: relative;
+    padding: 20px 40px;
+    
+    /* subtle glass background to make text readable over the 3D model */
+    background: radial-gradient(ellipse at center, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 70%);
+}
+
+.logo {
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 3.5rem; /* Bigger */
+    font-weight: 800; /* Bolder */
+    letter-spacing: 8px; /* Cinematic spacing */
+    margin-bottom: 5px;
+    
+    /* Complex Gradient Text */
+    background: linear-gradient(to bottom, #ffffff, #888888);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    
+    /* Glowing Drop Shadow */
+    filter: drop-shadow(0 0 15px rgba(0, 243, 255, 0.3));
+}
+
+.logo span { 
+    /* The word "VOICE" gets the Cyan color */
+    background: linear-gradient(to bottom, var(--primary), #0088ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    filter: drop-shadow(0 0 20px var(--primary));
+}
+
+.subtitle {
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 6px;
+    color: #aaa;
+    margin-bottom: 25px;
+    text-transform: uppercase;
+    
+    /* Make it look like a tech HUD label */
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+    display: inline-block;
+    padding-bottom: 5px;
+}
+
+.mode-switch {
+    background: rgba(255,255,255,0.05);
+    padding: 5px;
+    border-radius: 40px;
+    border: 1px solid var(--border);
+    backdrop-filter: blur(10px);
+    display: inline-flex;
+    gap: 10px;
+}
+
+.mode-switch button {
+    background: transparent;
+    border: none;
+    color: #aaa;
+    padding: 12px 30px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    transition: 0.3s;
+    min-height: 48px;
+}
+
+.mode-switch button.active {
+    background: var(--primary);
+    color: black;
+    box-shadow: 0 0 20px var(--primary);
+}
+
+/* SPACER */
+.spacer {
+    /* This empty space allows the 3D ring to be seen between Header and Boxes */
+    height: 250px; 
+    width: 100%;
+}
+
+/* GLASS CARDS (Larger Size + Tech Elements) */
+.glass-card {
+    background: rgba(10, 15, 25, 0.75);
+    backdrop-filter: blur(25px);
+    -webkit-backdrop-filter: blur(25px);
+    border: 1px solid rgba(0, 243, 255, 0.2);
+    border-radius: 16px; /* Larger radius */
+    padding: 35px;       /* Bigger padding (from first code) */
+    width: 540px;        /* Wider box (from first code) */
+    max-width: 90%;
+    box-shadow: 0 0 50px rgba(0,0,0,0.6);
+    pointer-events: auto;
+    position: absolute;
+    top: 340px; 
+    transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.hidden-card {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(30px) scale(0.95);
+}
+
+/* Card Header */
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 15px;
+    margin-bottom: 25px; /* More space */
+}
+
+.card-header h2 {
+    font-family: 'Space Grotesk', sans-serif;
+    color: white;
+    font-size: 1.3rem; /* Bigger font */
+    letter-spacing: 2px;
+}
+.card-header h2 i { color: var(--primary); margin-right: 12px; }
+
+.badge {
+    font-size: 0.75rem; /* Bigger badge */
+    background: rgba(0, 243, 255, 0.1);
+    color: var(--primary);
+    padding: 6px 12px;
+    border-radius: 6px;
+    border: 1px solid var(--primary);
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+.badge.purple { color: var(--secondary); border-color: var(--secondary); background: rgba(188, 19, 254, 0.1); }
+
+/* Inputs */
+.input-label {
+    font-size: 0.85rem; /* Bigger label */
+    color: #888;
+    margin-bottom: 10px;
+    letter-spacing: 1px;
+    font-weight: 600;
+}
+
+textarea {
+    width: 100%;
+    height: 110px; /* Taller box */
+    background: rgba(0,0,0,0.5);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px;
+    color: white;
+    font-family: 'Inter', sans-serif;
+    font-size: 1.05rem; /* Bigger input text */
+    resize: none;
+    outline: none;
+    transition: 0.3s;
+}
+textarea:focus { border-color: var(--primary); background: rgba(0,0,0,0.7); }
+
+/* Tech Controls Row */
+.tech-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 20px;
+    padding: 12px;
+    background: rgba(255,255,255,0.03);
+    border-radius: 10px;
+}
+
+.control-item { display: flex; align-items: center; gap: 12px; font-size: 0.85rem; color: #bbb; }
+
+.control-item label,
+.control-item span {
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: 1px;
+    font-weight: 700;
+}
+
+.speed-control {
+    flex: 1.35;
+}
+
+.speed-slider-wrap {
+    display: grid;
+    grid-template-columns: minmax(120px, 1fr) 58px;
+    align-items: center;
+    gap: 12px;
+    width: 100%;
+}
+
+.slider {
+    -webkit-appearance: none;
+    appearance: none;
+    height: 48px;
+    background: transparent;
+    border-radius: 999px;
+    width: 100%;
+    min-height: 48px;
+    touch-action: pan-x;
+    cursor: pointer;
+}
+
+.slider::-webkit-slider-runnable-track {
+    height: 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 243, 255, 0.28);
+    background:
+        linear-gradient(90deg, rgba(0, 243, 255, 0.85), rgba(188, 19, 254, 0.82)),
+        rgba(255, 255, 255, 0.08);
+    box-shadow: 0 0 18px rgba(0, 243, 255, 0.22), inset 0 0 12px rgba(0, 0, 0, 0.65);
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 24px;
+    height: 24px;
+    margin-top: -8px;
+    background: radial-gradient(circle, #ffffff 0%, var(--primary) 38%, #006f82 100%);
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 18px rgba(0, 243, 255, 0.75), 0 0 2px rgba(255, 255, 255, 0.95);
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.slider:hover::-webkit-slider-thumb,
+.slider:active::-webkit-slider-thumb {
+    transform: scale(1.12);
+    box-shadow: 0 0 26px rgba(0, 243, 255, 0.95), 0 0 14px rgba(188, 19, 254, 0.55);
+}
+
+.slider::-moz-range-track {
+    height: 10px;
+    border-radius: 999px;
+    border: 1px solid rgba(0, 243, 255, 0.28);
+    background: linear-gradient(90deg, rgba(0, 243, 255, 0.85), rgba(188, 19, 254, 0.82));
+    box-shadow: 0 0 18px rgba(0, 243, 255, 0.22), inset 0 0 12px rgba(0, 0, 0, 0.65);
+}
+
+.slider::-moz-range-thumb {
+    width: 22px;
+    height: 22px;
+    background: radial-gradient(circle, #ffffff 0%, var(--primary) 38%, #006f82 100%);
+    border: 2px solid rgba(255, 255, 255, 0.85);
+    border-radius: 50%;
+    cursor: pointer;
+    box-shadow: 0 0 18px rgba(0, 243, 255, 0.75);
+}
+
+.speed-readout {
+    min-width: 58px;
+    padding: 7px 8px;
+    border: 1px solid rgba(0, 243, 255, 0.28);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.46);
+    color: var(--primary);
+    font-family: 'Space Grotesk', sans-serif;
+    font-size: 0.88rem;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-align: center;
+    box-shadow: inset 0 0 14px rgba(0, 243, 255, 0.08);
+}
+
+.pill {
+    background: #333;
+    padding: 6px 14px;
+    border-radius: 6px;
+    color: white;
+    font-family: 'Space Grotesk';
+    font-size: 0.8rem;
+}
+
+/* BUTTONS */
+.controls { margin-top: 30px; text-align: center; }
+
+.generate-btn {
+    background: var(--primary);
+    border: none;
+    padding: 14px 35px; /* Larger button padding */
+    border-radius: 8px;
+    color: black;
+    font-family: 'Space Grotesk';
+    font-weight: 700;
+    font-size: 1rem; /* Bigger text */
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: 0.3s;
+    width: 100%;
+    min-height: 52px;
+}
+
+.generate-btn:hover {
+    background: white;
+    box-shadow: 0 0 20px var(--primary);
+}
+
+.purple-btn { background: var(--secondary); color: white; }
+.purple-btn:hover { box-shadow: 0 0 20px var(--secondary); }
+
+/* CLONE SPECIFIC UI */
+.audio-input-row {
+    display: flex;
+    gap: 15px;
+    margin-top: 15px;
+}
+
+.drop-zone-compact {
+    flex: 1;
+    border: 1px dashed #666;
+    padding: 12px;
+    text-align: center;
+    border-radius: 8px;
+    font-size: 0.9rem; /* Bigger text */
+    color: #999;
+    cursor: pointer;
+    transition: 0.2s;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+.drop-zone-compact:hover { border-color: var(--secondary); color: white; }
+.drop-zone-compact.drag-active { border-color: var(--secondary); color: white; background: rgba(188, 19, 254, 0.12); }
+
+.record-btn-compact {
+    flex: 0.5;
+    background: rgba(255,0,0,0.1);
+    border: 1px solid #ff4444;
+    color: #ff4444;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem; /* Bigger text */
+    font-weight: 700;
+    min-height: 48px;
+}
+.record-btn-compact:hover { background: rgba(255,0,0,0.3); }
+
+.status-text {
+    font-size: 0.8rem; /* Bigger status text */
+    color: #666;
+    text-align: center;
+    margin-top: 10px;
+    font-family: 'Space Grotesk';
+}
+
+/* SYSTEM FOOTER */
+.card-footer {
+    margin-top: 25px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    font-size: 0.75rem; /* Bigger footer text */
+    color: #555;
+    text-align: center;
+    letter-spacing: 2px;
+    font-family: 'Space Grotesk';
+}
+
+/* AUDIO PLAYER (Strictly Hidden Initially) */
+.audio-player-container {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(5, 10, 20, 0.95); /* Darker background */
+    border-top: 1px solid var(--primary);
+    padding: 20px;
+    z-index: 100;
+    pointer-events: auto;
+    
+    /* HIDE IT COMPLETELY */
+    transform: translateY(100%);
+    opacity: 0;
+    visibility: hidden; /* Fixes the visual glitch */
+    transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Only show when JS adds this class */
+.audio-player-container.show {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+}
+
+.player-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    max-width: 900px;
+    margin: 0 auto;
+}
+
+.player-label { 
+    font-size: 0.8rem; 
+    color: var(--primary); 
+    letter-spacing: 2px; 
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* Customize the Audio Element */
+audio {
+    width: 100%;
+    max-width: 500px;
+    height: 40px;
+    filter: invert(1) hue-rotate(180deg); /* Techy dark player */
+    border-radius: 30px;
+}
+
+.status-message {
+    font-size: 0.8rem;
+    color: #aaa;
+    font-family: 'Space Grotesk';
+    letter-spacing: 1px;
+    min-width: 150px;
+    text-align: left;
+}
+
+/* ==========================================================================
+   DESKTOP VIEW (>= 1024px)
+   The original high-fidelity control-room composition lives above this block:
+   fixed viewport, centered header, absolute terminal cards, and full-screen 3D.
+   ========================================================================== */
+
+@media (min-width: 1024px) {
+    .ui-container {
+        min-height: 100vh;
+    }
+}
+
+/* ==========================================================================
+   TABLET VIEW (<= 1023px)
+   Cards enter normal flow and stack below a responsive 3D visualizer band.
+   ========================================================================== */
+
+@media (max-width: 1023px) {
+    body {
+        min-height: 100dvh;
+        overflow-x: hidden;
+        overflow-y: auto;
+    }
+
+    #canvas-container {
+        position: absolute;
+        height: clamp(430px, 62dvh, 640px);
+    }
+
+    .ui-container {
+        min-height: 100dvh;
+        height: auto;
+        padding: max(22px, env(safe-area-inset-top)) clamp(16px, 4vw, 40px) calc(128px + env(safe-area-inset-bottom));
+        align-items: center;
+        justify-content: flex-start;
+        gap: clamp(18px, 3vw, 28px);
+    }
+
+    header {
+        width: min(100%, 760px);
+        margin: 0 auto;
+        padding: clamp(16px, 3vw, 24px) clamp(12px, 3vw, 28px);
+    }
+
+    .logo {
+        font-size: clamp(2rem, 7vw, 3.25rem);
+        letter-spacing: clamp(3px, 1.4vw, 8px);
+        overflow-wrap: anywhere;
+    }
+
+    .subtitle {
+        font-size: clamp(0.72rem, 1.8vw, 0.85rem);
+        letter-spacing: clamp(2px, 0.9vw, 6px);
+        margin-bottom: clamp(16px, 3vw, 24px);
+    }
+
+    .mode-switch {
+        width: min(100%, 520px);
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        border-radius: 24px;
+        margin-inline: auto;
+    }
+
+    .mode-switch button {
+        padding: 12px clamp(12px, 2.6vw, 24px);
+        border-radius: 20px;
+        font-size: clamp(0.72rem, 1.7vw, 0.9rem);
+        letter-spacing: clamp(0.8px, 0.35vw, 2px);
+        white-space: normal;
+    }
+
+    .spacer {
+        height: clamp(270px, 40dvh, 410px);
+        pointer-events: none;
+    }
+
+    .glass-card {
+        position: relative;
+        top: auto;
+        width: min(100%, 680px);
+        max-width: 100%;
+        margin: 0 auto;
+        padding: clamp(22px, 4vw, 34px);
+        border-radius: 14px;
+    }
+
+    .hidden-card {
+        display: none;
+    }
+
+    .active-card {
+        display: block;
+    }
+
+    .card-header {
+        gap: 16px;
+    }
+
+    .card-header h2 {
+        font-size: clamp(1.05rem, 2.4vw, 1.3rem);
+        letter-spacing: clamp(1px, 0.35vw, 2px);
+    }
+
+    textarea {
+        min-height: 132px;
+        height: clamp(132px, 20vh, 180px);
+        font-size: clamp(1rem, 2vw, 1.08rem);
+    }
+
+    .tech-controls {
+        gap: 14px;
+        flex-wrap: wrap;
+    }
+
+    .control-item {
+        min-width: min(100%, 230px);
+        flex: 1;
+        justify-content: space-between;
+    }
+
+    .speed-slider-wrap {
+        grid-template-columns: minmax(160px, 1fr) 58px;
+    }
+
+    .audio-input-row {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(112px, 0.45fr);
+    }
+
+    .player-wrapper {
+        width: min(100%, 760px);
+        gap: 16px;
+        justify-content: stretch;
+    }
+}
+
+/* ==========================================================================
+   MOBILE VIEW (<= 640px)
+   Single-column controls, compact spacing, and full-width touch targets.
+   ========================================================================== */
+
+@media (max-width: 640px) {
+    .ui-container {
+        padding-inline: clamp(12px, 4vw, 18px);
+        padding-bottom: calc(156px + env(safe-area-inset-bottom));
+        gap: 16px;
+    }
+
+    header {
+        padding-inline: 8px;
+    }
+
+    .logo {
+        font-size: clamp(1.65rem, 9vw, 2.35rem);
+        letter-spacing: clamp(1.5px, 1vw, 4px);
+    }
+
+    .subtitle {
+        max-width: 24rem;
+        line-height: 1.5;
+        white-space: normal;
+    }
+
+    .mode-switch {
+        border-radius: 18px;
+        gap: 6px;
+    }
+
+    .mode-switch button {
+        min-height: 50px;
+        padding: 10px 8px;
+        font-size: clamp(0.68rem, 3vw, 0.78rem);
+    }
+
+    .spacer {
+        height: clamp(235px, 35dvh, 315px);
+    }
+
+    .glass-card {
+        padding: clamp(18px, 5vw, 24px);
+        border-radius: 12px;
+    }
+
+    .card-header {
+        align-items: flex-start;
+        flex-direction: column;
+        margin-bottom: 20px;
+    }
+
+    .badge {
+        align-self: flex-start;
+    }
+
+    .tech-controls,
+    .audio-input-row,
+    .player-wrapper {
+        grid-template-columns: 1fr;
+        flex-direction: column;
+    }
+
+    .control-item {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .speed-slider-wrap {
+        grid-template-columns: 1fr 58px;
+    }
+
+    .drop-zone-compact,
+    .record-btn-compact {
+        width: 100%;
+    }
+
+    .card-footer {
+        font-size: clamp(0.62rem, 2.7vw, 0.75rem);
+        line-height: 1.5;
+        letter-spacing: 1px;
+    }
+
+    .audio-player-container {
+        padding: 14px clamp(12px, 4vw, 18px) calc(14px + env(safe-area-inset-bottom));
+    }
+
+    .player-wrapper {
+        align-items: stretch;
+        gap: 10px;
+    }
+
+    .player-label,
+    .status-message {
+        text-align: center;
+        min-width: 0;
+    }
+
+    audio {
+        max-width: none;
+    }
+}
+
+/* ==========================================================================
+   SHORT MOBILE VIEW
+   Protects landscape phones and compact split-screen windows from overlap.
+   ========================================================================== */
+
+@media (max-width: 1023px) and (max-height: 720px) {
+    #canvas-container {
+        height: clamp(320px, 58dvh, 430px);
+    }
+
+    .spacer {
+        height: clamp(210px, 34dvh, 280px);
+    }
+}
