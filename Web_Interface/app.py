@@ -218,4 +218,6 @@ def clone_voice():
 
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True, threaded=True)
+    # host="0.0.0.0" tells Flask to accept connections from the outside internet
+    # port=7860 is required by Hugging Face Docker Spaces
+    app.run(host="0.0.0.0", port=7860)
