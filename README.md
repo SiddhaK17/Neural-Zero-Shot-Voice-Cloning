@@ -18,6 +18,8 @@ pinned: false
 ![Flask](https://img.shields.io/badge/Flask-Backend%20API-white)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
+A production-ready, end-to-end artificial intelligence system engineered for zero-shot voice cloning and high-fidelity text-to-speech (TTS) synthesis. The backend infrastructure leverages PyTorch and Flask to serve complex neural architectures—specifically Coqui XTTS-v2 and custom-trained Glow-TTS weights—handling asynchronous inference requests efficiently. The entire environment is fully Dockerized, managing heavy C++ audio dependencies (espeak-ng, ffmpeg) to ensure seamless cloud deployment and CPU-optimized inference. To bridge the gap between heavy backend computing and user experience, the system is wrapped in a highly immersive, audio-reactive WebGL frontend built with modern glassmorphism UI principles.
+
 ---
 
 ## Table of Contents

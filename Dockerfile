@@ -1,26 +1,29 @@
-# 1. Choose a stable, clean Python environment
+# 1. Base Python environment
 FROM python:3.10-slim
 
-# 2. Install system-level audio dependencies (FFmpeg and libsndfile)
+# 2. Install heavy-duty Linux build tools and speech dependencies
 RUN apt-get update && apt-get install -y \
+    build-essential \
+    python3-dev \
+    espeak-ng \
     ffmpeg \
     libsndfile1 \
     && rm -rf /var/lib/apt/lists/*
 
-# 3. Establish the working folder inside the cloud container
+# 3. Establish the working folder
 WORKDIR /app
 
-# 4. Copy and install your dependencies first (improves build caching speeds)
+# 4. Copy and install requirements
 COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt
 
-# 5. Copy the rest of your local repository files into the machine
+# 5. Copy the rest of your project
 COPY . .
 
-# 6. Expose the mandatory Hugging Face port
+# 6. Expose the Hugging Face port
 EXPOSE 7860
 
-# 7. Step into the interface directory and launch the server
+# 7. Start the server
 WORKDIR /app/Web_Interface
 CMD ["python", "app.py"]

@@ -1,4 +1,4 @@
-numpy==1.24.3
+numpy==1.22.0
 scipy
 pandas
 librosa
@@ -8,3 +8,4 @@ tts @ https://github.com/coqui-ai/TTS/archive/refs/heads/dev.zip
 tqdm
 streamlit
 psutil
+flask-cors

@@ -1,4 +1,5 @@
 import os
+os.environ["COQUI_TOS_AGREED"] = "1"
 import uuid
 from io import BytesIO
 
@@ -42,8 +43,11 @@ use_cuda = torch.cuda.is_available()
 device_name = "cuda" if use_cuda else "cpu"
 print(f"Hardware detected: {device_name.upper()}")
 
-MY_MODEL_PATH = os.path.join(BASE_DIR, "proof_logs", "run_2026-02-12_16-48-52", "run-February-12-2026_04+48PM-0000000", "best_model.pth")
-MY_CONFIG_PATH = os.path.join(BASE_DIR, "proof_logs", "run_2026-02-12_16-48-52", "run-February-12-2026_04+48PM-0000000", "config.json")
+# MY_MODEL_PATH = os.path.join(BASE_DIR, "proof_logs", "run_2026-02-12_16-48-52", "run-February-12-2026_04+48PM-0000000", "best_model.pth")
+# MY_CONFIG_PATH = os.path.join(BASE_DIR, "proof_logs", "run_2026-02-12_16-48-52", "run-February-12-2026_04+48PM-0000000", "config.json")
+
+MY_MODEL_PATH = os.path.join(BASE_DIR, "custom_model", "best_model.pth")
+MY_CONFIG_PATH = os.path.join(BASE_DIR, "custom_model", "config.json")
 
 UPLOAD_FOLDER = "temp_uploads"
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
