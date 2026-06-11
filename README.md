@@ -1,3 +1,13 @@
+---
+title: Neural Zero Shot Voice Cloning
+emoji: 🎙️
+colorFrom: blue
+colorTo: purple
+sdk: docker
+app_port: 7860
+pinned: false
+---
+
 # 🎙️ Neural Voice AI: Generative TTS and Zero-Shot Voice Cloning System
 
 ![Status](https://img.shields.io/badge/Status-Active-brightgreen)
